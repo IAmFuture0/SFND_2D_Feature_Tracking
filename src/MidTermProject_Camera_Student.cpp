@@ -153,7 +153,7 @@ int main(int argc, const char *argv[])
 
             	//// TASK MP.5 -> add FLANN matching in file matching2D.cpp
             	//// TASK MP.6 -> add KNN match selection and perform descriptor distance ratio filtering with t=0.8 in file matching2D.cpp
-				matchDescriptors((dataBuffer.end() - 2)->keypoints, (dataBuffer.end() - 1)->keypoints, (dataBuffer.end() - 2)->descriptors, (dataBuffer.end() - 1)->descriptors, matches, descriptorType2, matcherType, selectorType);
+		matchDescriptors((dataBuffer.end() - 2)->keypoints, (dataBuffer.end() - 1)->keypoints, (dataBuffer.end() - 2)->descriptors, (dataBuffer.end() - 1)->descriptors, matches, descriptorType2, matcherType, selectorType);
 
             	// store matches in current data frame
             	(dataBuffer.end() - 1)->kptMatches = matches;
