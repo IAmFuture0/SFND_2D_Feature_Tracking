@@ -15,7 +15,7 @@ void matchDescriptors(std::vector<cv::KeyPoint> &kPtsSource, std::vector<cv::Key
     {
         int normType = cv::NORM_HAMMING;
 		if(descriptorType.compare("DES_HOG") == 0){
-            normType = cv::NORM_L1;
+            normType = cv::NORM_L2;
         }
         if (descSource.type() != CV_32F || descRef.type()!=CV_32F)
         { // OpenCV bug workaround : convert binary descriptors to floating point due to a bug in current OpenCV implementation
