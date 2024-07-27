@@ -63,7 +63,7 @@ int main(int argc, const char *argv[])
       	MP7file << detectorType << ",";
       	for(auto descriptorType : descriptorTypeList){
             MP8file << detectorType << "/" << descriptorType;
-          	if (descriptorType == "ORB")continue;
+          	//if (descriptorType == "ORB")continue;
 			if (detectorType != "AKAZE" && descriptorType == "AKAZE")continue;
     		for (size_t imgIndex = 0; imgIndex <= imgEndIndex - imgStartIndex; imgIndex++){
         	/* LOAD IMAGE INTO BUFFER */
@@ -141,16 +141,19 @@ int main(int argc, const char *argv[])
               
               if (dataBuffer.size() > 1){ // wait until at least two images have been processed
 	            // MATCH KEYPOINT DESCRIPTORS //
-    	        vector<cv::DMatch> matches;
-        	    string matcherType = "MAT_BF";        // MAT_BF, MAT_FLANN
-            	string descriptorType = "DES_BINARY"; // DES_BINARY, DES_HOG
-            	string selectorType = "SEL_KNN";       // SEL_NN, SEL_KNN
+        	    vector<cv::DMatch> matches;
+				string matcherType = "MAT_BF";        // MAT_BF, MAT_FLANN
+                string descriptorType2;
+                if(descriptorType == "BRIEF"||descriptorType == "ORB"||descriptorType=="SIFT"){
+                  descriptorType2 = "DES_HOG";
+                } else{
+                  descriptorType2 = "DES_BINARY";
+                }
+				string selectorType = "SEL_KNN";       // SEL_NN, SEL_KNN
 
             	//// TASK MP.5 -> add FLANN matching in file matching2D.cpp
             	//// TASK MP.6 -> add KNN match selection and perform descriptor distance ratio filtering with t=0.8 in file matching2D.cpp
-	            matchDescriptors((dataBuffer.end() - 2)->keypoints, (dataBuffer.end() - 1)->keypoints,
-    	                         (dataBuffer.end() - 2)->descriptors, (dataBuffer.end() - 1)->descriptors,
-        	                     matches, descriptorType, matcherType, selectorType);
+				matchDescriptors((dataBuffer.end() - 2)->keypoints, (dataBuffer.end() - 1)->keypoints, (dataBuffer.end() - 2)->descriptors, (dataBuffer.end() - 1)->descriptors, matches, descriptorType2, matcherType, selectorType);
 
             	// store matches in current data frame
             	(dataBuffer.end() - 1)->kptMatches = matches;
