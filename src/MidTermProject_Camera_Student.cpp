@@ -144,7 +144,7 @@ int main(int argc, const char *argv[])
         	    vector<cv::DMatch> matches;
 				string matcherType = "MAT_BF";        // MAT_BF, MAT_FLANN
                 string descriptorType2;
-                if(descriptorType == "BRIEF"||descriptorType == "ORB"||descriptorType=="SIFT"){
+                if(descriptorType=="SIFT"){
                   descriptorType2 = "DES_HOG";
                 } else{
                   descriptorType2 = "DES_BINARY";
