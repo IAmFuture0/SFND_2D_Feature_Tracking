@@ -38,33 +38,44 @@ int main(int argc, const char *argv[])
 
     // misc
     int dataBufferSize = 2;       // no. of images which are held in memory (ring buffer) at the same time
-    vector<DataFrame> dataBuffer; // list of data frames which are held in memory at the same time
     bool bVis = false;            // visualize results
 
     /* MAIN LOOP OVER ALL IMAGES */
 	// create a output stream to save data
-    std::ofstream MP7file, MP8file;
+    std::ofstream MP7file, MP8file, MP9file;
     MP7file.open("MP_7.csv");
   	MP7file << "detectorType,";
   	MP8file.open("MP_8.csv");
   	MP8file << "detector/descriptor, ";
-  	
+  	MP9file.open("MP_9.csv");
+  	MP9file << "time(ms),";
+  
   	// assign the title of each column in MP_7.csv
   	for(int i = 0; i<10;i++){
       MP7file << "frame " << i+1 << "number," << "frame " << i+1 << "mean," << "frame " << i+1 << "variance,";
       MP8file << "frame " << i+1 << "number,";
+      MP9file << "frame " << i+1 << "keypoint detection," << "frame " << i+1 << "descriptor extraction,";
     }
   	MP7file << "\n";
   	MP8file << "\n";
+  	MP9file << "\n";
   
     vector<string> detectorTypeList{"HARRIS", "FAST", "BRISK", "ORB", "AKAZE", "SIFT"};
   	vector<string> descriptorTypeList{"BRIEF", "ORB", "FREAK", "AKAZE", "SIFT"};
   	for(auto detectorType : detectorTypeList){
-      	MP7file << detectorType << ",";
+      	
       	for(auto descriptorType : descriptorTypeList){
-            MP8file << detectorType << "/" << descriptorType;
-          	//if (descriptorType == "ORB")continue;
-			if (detectorType != "AKAZE" && descriptorType == "AKAZE")continue;
+            vector<DataFrame> dataBuffer; // list of data frames which are held in memory at the same time
+            cout << "----- Detector: " << detectorType << "Descriptor: " << descriptorType << "-----"<< std::endl;
+          	MP7file << detectorType << "/" << descriptorType << ",";
+            MP8file << detectorType << "/" << descriptorType << ",";
+          	MP9file << detectorType << "/" << descriptorType << ",";
+          	if((detectorType == "SIFT" && descriptorType == "ORB") || (detectorType != "AKAZE" && descriptorType == "AKAZE")){
+              MP7file << "\n";
+              MP8file << "\n";
+              MP9file << "\n";
+              continue;
+            }
     		for (size_t imgIndex = 0; imgIndex <= imgEndIndex - imgStartIndex; imgIndex++){
         	/* LOAD IMAGE INTO BUFFER */
 
@@ -93,8 +104,10 @@ int main(int argc, const char *argv[])
       	
         		//// TASK MP.2 -> add the following keypoint detectors in file matching2D.cpp and enable string-based selection based on detectorType
         		//// -> HARRIS, FAST, BRISK, ORB, AKAZE, SIFT
-      			detKeypoints(keypoints, imgGray, false, detectorType);
-
+              	double t_detKeypoints = 0;
+              	t_detKeypoints = detKeypoints(keypoints, imgGray, false, detectorType);
+				MP9file << t_detKeypoints << ",";
+                
         		//// TASK MP.3 -> only keep keypoints on the preceding vehicle
         		bool bFocusOnVehicle = true;
         		cv::Rect vehicleRect(535, 180, 180, 150);
@@ -130,9 +143,9 @@ int main(int argc, const char *argv[])
               //// -> BRIEF, ORB, FREAK, AKAZE, SIFT
 
         	  cv::Mat descriptors;
-        	  // string descriptorType = "BRIEF"; // BRIEF, *ORB*, FREAK, *AKAZE*, SIFT
-        	  descKeypoints((dataBuffer.end() - 1)->keypoints, (dataBuffer.end() - 1)->cameraImg, descriptors, descriptorType);
-
+              double t_descKeypoints = 0;
+        	  t_descKeypoints = descKeypoints((dataBuffer.end() - 1)->keypoints, (dataBuffer.end() - 1)->cameraImg, descriptors, descriptorType);
+			  MP9file << t_descKeypoints << ",";
         	  // push descriptors for current frame to end of data buffer
         	  (dataBuffer.end() - 1)->descriptors = descriptors;
 			  
@@ -143,17 +156,12 @@ int main(int argc, const char *argv[])
 	            // MATCH KEYPOINT DESCRIPTORS //
         	    vector<cv::DMatch> matches;
 				string matcherType = "MAT_BF";        // MAT_BF, MAT_FLANN
-                string descriptorType2;
-                if(descriptorType=="SIFT"){
-                  descriptorType2 = "DES_HOG";
-                } else{
-                  descriptorType2 = "DES_BINARY";
-                }
+                string descriptorType2 = descriptorType.compare("SIFT") == 0 ? "DES_HOG" : "DES_BINARY";
 				string selectorType = "SEL_KNN";       // SEL_NN, SEL_KNN
 
             	//// TASK MP.5 -> add FLANN matching in file matching2D.cpp
             	//// TASK MP.6 -> add KNN match selection and perform descriptor distance ratio filtering with t=0.8 in file matching2D.cpp
-		matchDescriptors((dataBuffer.end() - 2)->keypoints, (dataBuffer.end() - 1)->keypoints, (dataBuffer.end() - 2)->descriptors, (dataBuffer.end() - 1)->descriptors, matches, descriptorType2, matcherType, selectorType);
+				matchDescriptors((dataBuffer.end() - 2)->keypoints, (dataBuffer.end() - 1)->keypoints, (dataBuffer.end() - 2)->descriptors, (dataBuffer.end() - 1)->descriptors, matches, descriptorType2, matcherType, selectorType, (dataBuffer.end() - 2)->cameraImg, (dataBuffer.end() - 1)->cameraImg);
 
             	// store matches in current data frame
             	(dataBuffer.end() - 1)->kptMatches = matches;
@@ -164,13 +172,11 @@ int main(int argc, const char *argv[])
             }
         	MP7file << "\n";
       		MP8file << "\n";
-
-          cout << "----- Detector: " << detectorType << "Descriptor: " << descriptorType << "-----"<< std::endl;
+          	MP9file << "\n";
       }
-      
-      
     } // eof loop over all images
 	MP7file.close();
     MP8file.close();
+ 	MP9file.close();
     return 0;
 }
