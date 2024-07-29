@@ -12,16 +12,37 @@ The idea of the camera course is to build a collision detection system - that's 
 See the classroom instruction and code comments for more details on each of these parts. Once you are finished with this project, the keypoint matching part will be set up and you can proceed to the next lesson, where the focus is on integrating Lidar points and on object detection using deep-learning. 
 
 ## Rubric Fulfillment
-[x] MP.1 Data Buffer Optimization
-  * This is implemented in `Line 93` in the main file(MidTermProject_Camera_Student.cpp).
-[x] MP.2 Keypoint Detection
-[x] MP.3 Keypoint Removal
-[x] MP.4 Keypoint Descriptors
-[x] MP.5 Descriptor Matching
-[x] MP.6 Descriptor Distance Ratio
-[x] MP.7 Performance Evaluation 1
-[x] MP.8 Performance Evaluation 2
-[x] MP.9 Performance Evaluation 3
+- [x] MP.1 Data Buffer Optimization
+  * Description: Implement a vector for dataBuffer objects whose size does not exceed a limit (e.g. 2 elements). This can be achieved by pushing in new elements on one end and removing elements on the other end.
+  * Implementation: The Ring buffer is implemented in `Line 93` in the main file(MidTermProject_Camera_Student.cpp).
+- [x] MP.2 Keypoint Detection
+  * Description: Implement detectors HARRIS, FAST, BRISK, ORB, AKAZE, and SIFT and make them selectable by setting a string accordingly.
+  * Implementation: Each detector above is implemented `from Line 92 to Line 192` in the matching_2D_student.cpp file.
+- [x] MP.3 Keypoint Removal
+  * Description: Remove all keypoints outside of a pre-defined rectangle and only use the keypoints within the rectangle for further processing.
+  * Implementation: The process of only keeping keypoints on the preceding vehicle is from `Line 112 to Line 122` in the main file.
+- [x] MP.4 Keypoint Descriptors
+  * Description: Implement descriptors BRIEF, ORB, FREAK, AKAZE and SIFT and make them selectable by setting a string accordingly.
+  * Implementation: Each descriptor above is implemented `from Line 57 to Line 74` in the matching_2D_student.cpp file.
+- [x] MP.5 Descriptor Matching
+  * Description: Implement FLANN matching as well as k-nearest neighbor selection. Both methods must be selectable using the respective strings in the main function.
+  * Implementation: Matching using FLANN method is `from Line 17 to Line 24` in the matching_2D_student.cpp file.
+- [x] MP.6 Descriptor Distance Ratio
+  * Description: Use the K-Nearest-Neighbor matching to implement the descriptor distance ratio test, which looks at the ratio of best vs. second-best match to decide whether to keep an associated pair of keypoints.
+  * Implementation: Using the KNN matching is in `Line 164` in the main file.
+- [x] MP.7 Performance Evaluation 1
+  * Description: Count the number of keypoints on the preceding vehicle for all 10 images and take note of the distribution of their neighborhood size. Do this for all the detectors you have implemented.
+  * Implementation: There will be a MP7file in build folder after executing the program. All the data about keypoints will be saved in the file.
+- [x] MP.8 Performance Evaluation 2
+  * Description: Count the number of matched keypoints for all 10 images using all possible combinations of detectors and descriptors. In the matching step, the BF approach is used with the descriptor distance ratio set to 0.8.
+  * Implementation: There will be a MP8file in build folder after executing the program. The number of matched keypoints for all possible combination, except SIFT+ORB and non-AKAZE+AKAZE, will be recorded in the file.
+- [x] MP.9 Performance Evaluation 3
+  * Description: Log the time it takes for keypoint detection and descriptor extraction. The results must be entered into a spreadsheet and based on this data, the TOP3 detector / descriptor combinations must be recommended as the best choice for our purpose of detecting keypoints on vehicles.
+  * Implmentation: There will be a MP9file in build folder after executing the program. The computing time of both keypoint detection and descriptor extraction for all possible combination, except SIFT+ORB and non-AKAZE+non_AKAZE, will be recorded in the file.
+  * Top 3 Combinations (Detector + Descriptor)
+    1. FAST + ORB
+    2. FAST + BRIEF
+    3. ORB + BRIEF
 
 ## Dependencies for Running Locally
 1. cmake >= 2.8
