@@ -11,6 +11,18 @@ The idea of the camera course is to build a collision detection system - that's 
 
 See the classroom instruction and code comments for more details on each of these parts. Once you are finished with this project, the keypoint matching part will be set up and you can proceed to the next lesson, where the focus is on integrating Lidar points and on object detection using deep-learning. 
 
+## Rubric Fulfillment
+[x] MP.1 Data Buffer Optimization
+  * This is implemented in `Line 93` in the main file(MidTermProject_Camera_Student.cpp).
+[x] MP.2 Keypoint Detection
+[x] MP.3 Keypoint Removal
+[x] MP.4 Keypoint Descriptors
+[x] MP.5 Descriptor Matching
+[x] MP.6 Descriptor Distance Ratio
+[x] MP.7 Performance Evaluation 1
+[x] MP.8 Performance Evaluation 2
+[x] MP.9 Performance Evaluation 3
+
 ## Dependencies for Running Locally
 1. cmake >= 2.8
  * All OSes: [click here for installation instructions](https://cmake.org/install/)
